@@ -1,0 +1,33 @@
+<mvc:View controllerName="zeaproject.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page id="page" title="{i18n>title}">
+
+        <headerContent>
+            <Button text="Create PO" icon="sap-icon://add" press=".onCreatePress"/>
+            <Button text="Delete" icon="sap-icon://delete" press=".onDeletePress"/>
+        </headerContent>
+
+        <content>
+            <Table id="PurchaseOrderTable" items="{/PurchaseOrderHeaderSet}">
+                <columns>
+                    <Column><Text text="{i18n>purchase_order_number}"/></Column>
+                    <Column><Text text="{i18n>vendor_number}"/></Column>
+                    <Column><Text text="{i18n>payment_terms}"/></Column>
+                </columns>
+                <items>
+                    <ColumnListItem type="Active" press=".onRowPress">
+                        <cells>
+                            <Text text="{PoNumber}"/>
+                            <Text text="{VendorNo}"/>
+                            <Text text="{Zterm}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+
+    </Page>
+
+</mvc:View>

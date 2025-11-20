@@ -1,0 +1,11 @@
+{
+    "base": "./dist",
+    "conn_usestrictssl" : false,
+    "conn_server": "https://sap.surpass.co.il:5230/",
+    "conn_client" : "800",
+    "conn_user": "OFFERN",
+    "conn_password": "AmitTheKing",
+    "abap_package": "$TMP",
+    "abap_bsp": "ZEA_PROJECT",
+    "abap_bsp_text": "UI5 upload through VSCode App"
+}

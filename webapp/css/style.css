@@ -1,0 +1,69 @@
+.detailPageStyle {
+    background-color: #f2f4f5;
+}
+
+.detailCard {
+    background: #ffffff;
+    padding: 22px 28px;
+    margin: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    transition: all 0.25s ease;
+    transform: translateY(0);
+}
+
+.animatedCard:hover {
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    transform: translateY(-6px);
+}
+
+.detailRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.detailRow:last-child {
+    border-bottom: none;
+}
+
+
+.detailLabel {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.05rem;
+}
+
+.detailValue {
+    font-weight: 400;
+    color: #34495e;
+    font-size: 1.05rem;
+}
+
+.animatedCard {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Dialog styling */
+.sapMDialog {
+    border-radius: 12px !important;
+}
+
+/* Labels */
+.sapMLabel {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Inputs */
+.sapMInputBase {
+    border-radius: 8px !important;
+}
+
+/* Make dialog modern */
+.customCreateDialog .sapMDialogTitle {
+    font-size: 20px;
+    font-weight: bold;
+}
+

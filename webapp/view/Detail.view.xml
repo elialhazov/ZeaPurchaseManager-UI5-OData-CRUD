@@ -1,0 +1,57 @@
+<mvc:View controllerName="zeaproject.controller.Detail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page id="detailPage"
+          title="PO Detail"
+          showNavButton="true"
+          navButtonPress=".onNavBack"
+          class="detailPageStyle">
+
+        <headerContent>
+            <Button text="Edit" icon="sap-icon://edit" press=".onEditPress"/>
+        </headerContent>
+
+        <content>
+            <VBox class="detailCard animatedCard">
+
+                <HBox class="detailRow">
+                    <Text class="detailLabel" text="PO Number:"/>
+                    <Text class="detailValue" text="{PoNumber}"/>
+                </HBox>
+
+                <HBox class="detailRow">
+                    <Text class="detailLabel" text="Vendor:"/>
+                    <Text class="detailValue" text="{VendorNo}"/>
+                </HBox>
+
+                <HBox class="detailRow">
+                    <Text class="detailLabel" text="Payment Terms:"/>
+                    <Text class="detailValue" text="{Zterm}"/>
+                </HBox>
+
+                <HBox class="detailRow">
+                    <Text class="detailLabel" text="Document Type:"/>
+                    <Text class="detailValue" text="{DocType}"/>
+                </HBox>
+
+                <HBox class="detailRow">
+                    <Text class="detailLabel" text="Purch. Org:"/>
+                    <Text class="detailValue" text="{PurchaseOrg}"/>
+                </HBox>
+
+                <HBox class="detailRow">
+                    <Text class="detailLabel" text="Purch. Group:"/>
+                    <Text class="detailValue" text="{PurchaseGroup}"/>
+                </HBox>
+
+                <HBox class="detailRow">
+                    <Text class="detailLabel" text="Created By:"/>
+                    <Text class="detailValue" text="{CreatedBy}"/>
+                </HBox>
+
+            </VBox>
+
+        </content>
+    </Page>
+</mvc:View>
