@@ -18,33 +18,33 @@ sap.ui.define([
         },
 
         _onObjectMatched: function (oEvent) {
-            var sPoNumber = oEvent.getParameter("arguments").PoNumber;
-            var oModel = this.getView().getModel();
+            let sPoNumber = oEvent.getParameter("arguments").PoNumber;
+            let oModel = this.getView().getModel();
 
-            this._sPath = "/PurchaseOrderDetailSet('" + sPoNumber + "')";
+            this._sPath = "/PurchaseOrderDetailSet(PoNumber='" + sPoNumber + "',ItemNo='')";
 
             oModel.read(this._sPath, {
-                success: function () {
+                success: () => {
                     this.getView().bindElement(this._sPath);
-                }.bind(this),
-                error: function () {
-                    console.error("Path not found:", this._sPath);
-                }.bind(this)
+                },
+                error: () => console.error("Path not found:", this._sPath)
             });
         },
 
         onNavBack: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteMain", {}, true);
+            this.getOwnerComponent().getRouter().navTo("RouteMain");
         },
 
+
+        // EDIT POPUP
         onEditPress: function () {
 
-            var oData = this.getView().getBindingContext().getObject();
+            let oData = this.getView().getBindingContext().getObject();
 
             if (!this.oEditDialog) {
 
                 this.oEditDialog = new Dialog({
-                    title: "Edit Purchase Order",
+                    title: "Edit Item",
                     type: "Message",
                     contentWidth: "500px",
 
@@ -52,29 +52,17 @@ sap.ui.define([
                         items: [
 
                             new Label({ text: "PO Number" }),
-                            this._editPO = new Input({
-                                editable: false,    
-                                enabled: false     
-                            }),
+                            this._editPO = new Input({ editable: false }),
 
-                            new Label({ text: "Vendor Number" }),
-                            this._editVendor = new Input({
-                                liveChange: this._validateFields.bind(this)
-                            }),
+                            new Label({ text: "Item Number" }),
+                            this._editItem = new Input(),  
 
-                            new Label({ text: "Payment Terms (ZTERM)" }),
-                            this._editZterm = new Input({
-                                liveChange: this._validateFields.bind(this)
-                            }),
+                            new Label({ text: "Material" }),
+                            this._editMaterial = new Input(),
 
-                            new Label({ text: "Document Type" }),
-                            this._editDoc = new Input(),
+                            new Label({ text: "Created By" }),
+                            this._editCreated = new Input()
 
-                            new Label({ text: "Purchase Org" }),
-                            this._editOrg = new Input(),
-
-                            new Label({ text: "Purchase Group" }),
-                            this._editGroup = new Input()
                         ],
                         width: "100%"
                     }),
@@ -82,85 +70,56 @@ sap.ui.define([
                     beginButton: new Button({
                         text: "Save",
                         type: "Emphasized",
-                        press: this._onUpdatePress.bind(this)
+                        press: this._onSaveEdit.bind(this)
                     }),
 
                     endButton: new Button({
                         text: "Cancel",
-                        press: function () {
-                            this.oEditDialog.close();
-                        }.bind(this)
+                        press: () => this.oEditDialog.close()
                     })
                 });
             }
 
-            // Prefill all fields
             this._editPO.setValue(oData.PoNumber);
-            this._editVendor.setValue(oData.VendorNo);
-            this._editZterm.setValue(oData.Zterm);
-            this._editDoc.setValue(oData.DocType);
-            this._editOrg.setValue(oData.PurchaseOrg);
-            this._editGroup.setValue(oData.PurchaseGroup);
+            this._editItem.setValue(oData.ItemNo);
+            this._editMaterial.setValue(oData.Material);
+            this._editCreated.setValue(oData.CreatedBy);
+
+            if (!oData.ItemNo) {
+                this._editItem.setEditable(true);
+            } else {
+                this._editItem.setEditable(false);
+            }
 
             this.oEditDialog.open();
         },
 
-        _validateFields: function () {
+        //SAVE UPDATE
+        _onSaveEdit: function () {
 
-            const onlyDigits = (v) => /^[0-9]+$/.test(v);
+            let oModel = this.getView().getModel();
 
-            // Vendor
-            if (this._editVendor.getValue().length === 4 && onlyDigits(this._editVendor.getValue())) {
-                this._editVendor.setValueState("None");
-            } else {
-                this._editVendor.setValueState("Error");
-                this._editVendor.setValueStateText("Vendor must be 4 digits");
-            }
-
-            // ZTERM
-            if (this._editZterm.getValue().length === 4 && onlyDigits(this._editZterm.getValue())) {
-                this._editZterm.setValueState("None");
-            } else {
-                this._editZterm.setValueState("Error");
-                this._editZterm.setValueStateText("ZTERM must be 4 digits");
-            }
-        },
-
-        _onUpdatePress: function () {
-
-            var oModel = this.getView().getModel();
-
-            // validate again before saving
-            this._validateFields();
-
-            if (
-                this._editVendor.getValueState() === "Error" ||
-                this._editZterm.getValueState() === "Error"
-            ) {
-                MessageToast.show("Please correct highlighted fields");
-                return;
-            }
-
-            var oEntry = {
-                VendorNo: this._editVendor.getValue(),
-                Zterm: this._editZterm.getValue(),
-                DocType: this._editDoc.getValue(),
-                PurchaseOrg: this._editOrg.getValue(),
-                PurchaseGroup: this._editGroup.getValue()
+            let oEntry = {
+                PoNumber: this._editPO.getValue(),
+                ItemNo: this._editItem.getValue(),         
+                Material: this._editMaterial.getValue(),
+                CreatedBy: this._editCreated.getValue()
             };
 
             oModel.update(this._sPath, oEntry, {
-                success: function () {
-                    MessageToast.show("Updated Successfully!");
+                success: () => {
+                    MessageToast.show("Item updated successfully!");
                     oModel.refresh(true);
                     this.oEditDialog.close();
-                }.bind(this),
+                },
 
-                error: function (err) {
-                    MessageToast.show("Update Failed");
+                error: (err) => {
+                    MessageToast.show("Update failed");
                     console.error(err);
                 }
             });
+
         }
+
     });
 });

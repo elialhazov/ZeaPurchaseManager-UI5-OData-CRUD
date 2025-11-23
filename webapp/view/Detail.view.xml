@@ -3,16 +3,18 @@
     xmlns="sap.m">
 
     <Page id="detailPage"
-          title="PO Detail"
+          title="PO Item Details"
           showNavButton="true"
           navButtonPress=".onNavBack"
           class="detailPageStyle">
 
         <headerContent>
-            <Button text="Edit" icon="sap-icon://edit" press=".onEditPress"/>
+            <Button text="Edit Item" icon="sap-icon://edit" press=".onEditPress"/>
         </headerContent>
 
         <content>
+
+            <!-- Card -->
             <VBox class="detailCard animatedCard">
 
                 <HBox class="detailRow">
@@ -21,28 +23,13 @@
                 </HBox>
 
                 <HBox class="detailRow">
-                    <Text class="detailLabel" text="Vendor:"/>
-                    <Text class="detailValue" text="{VendorNo}"/>
+                    <Text class="detailLabel" text="Item Number:"/>
+                    <Text class="detailValue" text="{ItemNo}"/>
                 </HBox>
 
                 <HBox class="detailRow">
-                    <Text class="detailLabel" text="Payment Terms:"/>
-                    <Text class="detailValue" text="{Zterm}"/>
-                </HBox>
-
-                <HBox class="detailRow">
-                    <Text class="detailLabel" text="Document Type:"/>
-                    <Text class="detailValue" text="{DocType}"/>
-                </HBox>
-
-                <HBox class="detailRow">
-                    <Text class="detailLabel" text="Purch. Org:"/>
-                    <Text class="detailValue" text="{PurchaseOrg}"/>
-                </HBox>
-
-                <HBox class="detailRow">
-                    <Text class="detailLabel" text="Purch. Group:"/>
-                    <Text class="detailValue" text="{PurchaseGroup}"/>
+                    <Text class="detailLabel" text="Material:"/>
+                    <Text class="detailValue" text="{Material}"/>
                 </HBox>
 
                 <HBox class="detailRow">
@@ -53,5 +40,6 @@
             </VBox>
 
         </content>
+
     </Page>
 </mvc:View>

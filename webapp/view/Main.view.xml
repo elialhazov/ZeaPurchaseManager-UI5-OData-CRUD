@@ -16,6 +16,7 @@
                     <Column><Text text="{i18n>vendor_number}"/></Column>
                     <Column><Text text="{i18n>payment_terms}"/></Column>
                 </columns>
+
                 <items>
                     <ColumnListItem type="Active" press=".onRowPress">
                         <cells>
