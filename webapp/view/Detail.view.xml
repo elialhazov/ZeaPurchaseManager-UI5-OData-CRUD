@@ -5,41 +5,46 @@
     <Page id="detailPage"
           title="PO Item Details"
           showNavButton="true"
-          navButtonPress=".onNavBack"
-          class="detailPageStyle">
+          navButtonPress=".onNavBack">
 
         <headerContent>
+            <Button text="Create Item" icon="sap-icon://add" press=".onCreatePress"/>
             <Button text="Edit Item" icon="sap-icon://edit" press=".onEditPress"/>
         </headerContent>
 
         <content>
 
-            <!-- Card -->
-            <VBox class="detailCard animatedCard">
-
+            <!-- HEADER -->
+            <VBox class="detailCard">
                 <HBox class="detailRow">
                     <Text class="detailLabel" text="PO Number:"/>
                     <Text class="detailValue" text="{PoNumber}"/>
                 </HBox>
-
-                <HBox class="detailRow">
-                    <Text class="detailLabel" text="Item Number:"/>
-                    <Text class="detailValue" text="{ItemNo}"/>
-                </HBox>
-
-                <HBox class="detailRow">
-                    <Text class="detailLabel" text="Material:"/>
-                    <Text class="detailValue" text="{Material}"/>
-                </HBox>
-
-                <HBox class="detailRow">
-                    <Text class="detailLabel" text="Created By:"/>
-                    <Text class="detailValue" text="{CreatedBy}"/>
-                </HBox>
-
             </VBox>
+
+            <!-- ITEMS TABLE -->
+            <Table id="itemTable">
+
+                <columns>
+                    <Column><Text text="Item Number"/></Column>
+                    <Column><Text text="Material"/></Column>
+                    <Column><Text text="Created By"/></Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem type="Active" press=".onSelectItem">
+                        <cells>
+                            <Text text="{ItemNo}"/>
+                            <Text text="{Material}"/>
+                            <Text text="{CreatedBy}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+
+            </Table>
 
         </content>
 
     </Page>
+
 </mvc:View>

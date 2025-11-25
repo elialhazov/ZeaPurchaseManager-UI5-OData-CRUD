@@ -27,24 +27,20 @@
       }
     }
   },
+
   "sap.ui": {
     "technology": "UI5",
-    "icons": {
-      "icon": "",
-      "favIcon": "",
-      "phone": "",
-      "phone@2": "",
-      "tablet": "",
-      "tablet@2": ""
-    },
+    "icons": {},
     "deviceTypes": {
       "desktop": true,
       "tablet": true,
       "phone": true
     }
   },
+
   "sap.ui5": {
     "flexEnabled": true,
+
     "dependencies": {
       "minUI5Version": "1.142.1",
       "libs": {
@@ -52,10 +48,12 @@
         "sap.ui.core": {}
       }
     },
+
     "contentDensities": {
       "compact": true,
       "cozy": true
     },
+
     "models": {
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
@@ -63,20 +61,24 @@
           "bundleName": "zeaproject.i18n.i18n"
         }
       },
+
       "": {
         "dataSource": "mainService",
         "preload": true,
-        "settings": {}
+        "settings": {
+          "defaultBindingMode": "TwoWay",
+          "useBatch": false
+        }
       }
     },
+
     "resources": {
       "css": [
-        {
-          "uri": "css/style.css"
-        }
+        { "uri": "css/style.css" }
       ]
     },
-"routing": {
+
+    "routing": {
       "config": {
         "routerClass": "sap.m.routing.Router",
         "controlAggregation": "pages",
@@ -88,22 +90,20 @@
         "async": true,
         "viewPath": "zeaproject.view"
       },
+
       "routes": [
         {
           "name": "RouteMain",
           "pattern": ":?query:",
-          "target": [
-            "TargetMain"
-          ]
+          "target": ["TargetMain"]
         },
-         {
+        {
           "name": "RouteDetail",
           "pattern": "Detail/{PoNumber}",
-          "target": [
-            "TargetDetail"
-          ]
+          "target": ["TargetDetail"]
         }
       ],
+
       "targets": {
         "TargetMain": {
           "id": "Main",
@@ -115,12 +115,12 @@
         }
       }
     },
-"rootView": {
-  "viewName": "zeaproject.view.App",
-  "type": "XML",
-  "id": "App",
-  "async": true
-}
 
+    "rootView": {
+      "viewName": "zeaproject.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
   }
 }

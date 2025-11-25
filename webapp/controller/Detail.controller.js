@@ -15,110 +15,182 @@ sap.ui.define([
             const oRouter = this.getOwnerComponent().getRouter();
             oRouter.getRoute("RouteDetail")
                 .attachPatternMatched(this._onObjectMatched, this);
+
+            this._selectedItem = null;
         },
 
+        // =========================================================
+        // LOAD HEADER + ITEMS (VIA $expand)
+        // =========================================================
         _onObjectMatched: function (oEvent) {
+
             let sPoNumber = oEvent.getParameter("arguments").PoNumber;
-            let oModel = this.getView().getModel();
+            this._poNumber = sPoNumber;
 
-            this._sPath = "/PurchaseOrderDetailSet(PoNumber='" + sPoNumber + "',ItemNo='')";
+            // --- 1) Bind HEADER with EXPAND ---
+            let sHeaderPath = "/PurchaseOrderHeaderSet('" + sPoNumber + "')";
 
-            oModel.read(this._sPath, {
-                success: () => {
-                    this.getView().bindElement(this._sPath);
+            this.getView().bindElement({
+                path: sHeaderPath,
+                parameters: {
+                    expand: "NP_PODetails"
                 },
-                error: () => console.error("Path not found:", this._sPath)
+                events: {
+                    dataReceived: () => {
+                        console.log("Header + NP_PODetails loaded successfully");
+                    }
+                }
+            });
+
+            // --- 2) Bind ITEMS TABLE (navigation property) ---
+            let oTable = this.byId("itemTable");
+
+            oTable.bindItems({
+                path: sHeaderPath + "/NP_PODetails",
+                template: new sap.m.ColumnListItem({
+                    type: "Active",
+                    press: this.onSelectItem.bind(this),
+                    cells: [
+                        new sap.m.Text({ text: "{ItemNo}" }),
+                        new sap.m.Text({ text: "{Material}" }),
+                        new sap.m.Text({ text: "{CreatedBy}" })
+                    ]
+                })
             });
         },
 
+        // =========================================================
+        // NAV BACK
+        // =========================================================
         onNavBack: function () {
             this.getOwnerComponent().getRouter().navTo("RouteMain");
         },
 
-
-        // EDIT POPUP
-        onEditPress: function () {
-
-            let oData = this.getView().getBindingContext().getObject();
-
-            if (!this.oEditDialog) {
-
-                this.oEditDialog = new Dialog({
-                    title: "Edit Item",
-                    type: "Message",
-                    contentWidth: "500px",
-
-                    content: new VBox({
-                        items: [
-
-                            new Label({ text: "PO Number" }),
-                            this._editPO = new Input({ editable: false }),
-
-                            new Label({ text: "Item Number" }),
-                            this._editItem = new Input(),  
-
-                            new Label({ text: "Material" }),
-                            this._editMaterial = new Input(),
-
-                            new Label({ text: "Created By" }),
-                            this._editCreated = new Input()
-
-                        ],
-                        width: "100%"
-                    }),
-
-                    beginButton: new Button({
-                        text: "Save",
-                        type: "Emphasized",
-                        press: this._onSaveEdit.bind(this)
-                    }),
-
-                    endButton: new Button({
-                        text: "Cancel",
-                        press: () => this.oEditDialog.close()
-                    })
-                });
-            }
-
-            this._editPO.setValue(oData.PoNumber);
-            this._editItem.setValue(oData.ItemNo);
-            this._editMaterial.setValue(oData.Material);
-            this._editCreated.setValue(oData.CreatedBy);
-
-            if (!oData.ItemNo) {
-                this._editItem.setEditable(true);
-            } else {
-                this._editItem.setEditable(false);
-            }
-
-            this.oEditDialog.open();
+        // =========================================================
+        // SELECT ITEM
+        // =========================================================
+        onSelectItem: function (oEvent) {
+            this._selectedItem = oEvent.getSource().getBindingContext().getObject();
         },
 
-        //SAVE UPDATE
-        _onSaveEdit: function () {
+        // =========================================================
+        // CREATE ITEM
+        // =========================================================
+        onCreatePress: function () {
+            this._openPopup({
+                PoNumber: this._poNumber,
+                ItemNo: "",
+                Material: "",
+                CreatedBy: ""
+            }, true);
+        },
 
+        // =========================================================
+        // EDIT ITEM
+        // =========================================================
+        onEditPress: function () {
+            if (!this._selectedItem) {
+                MessageToast.show("Please select an item first");
+                return;
+            }
+
+            this._openPopup(this._selectedItem, false);
+        },
+
+        // =========================================================
+        // POPUP (CREATE / EDIT)
+        // =========================================================
+        _openPopup: function (oData, isCreate) {
+
+            if (this.oDialog) this.oDialog.destroy();
+
+            this.oDialog = new Dialog({
+                title: isCreate ? "Create Item" : "Edit Item",
+                type: "Message",
+                contentWidth: "500px",
+
+                content: new VBox({
+                    items: [
+
+                        new Label({ text: "PO Number" }),
+                        this._inPO = new Input({ value: oData.PoNumber, editable: false }),
+
+                        new Label({ text: "Item Number" }),
+                        this._inItem = new Input({
+                            value: oData.ItemNo,
+                            editable: isCreate
+                        }),
+
+                        new Label({ text: "Material" }),
+                        this._inMaterial = new Input({ value: oData.Material }),
+
+                        new Label({ text: "Created By" }),
+                        this._inCreated = new Input({ value: oData.CreatedBy })
+                    ]
+                }),
+
+                beginButton: new Button({
+                    text: "Save",
+                    type: "Emphasized",
+                    press: () => this._onSave(isCreate)
+                }),
+
+                endButton: new Button({
+                    text: "Cancel",
+                    press: () => this.oDialog.close()
+                })
+            });
+
+            this.oDialog.open();
+        },
+
+        // =========================================================
+        // SAVE (CREATE / UPDATE)
+        // =========================================================
+        _onSave: function (isCreate) {
             let oModel = this.getView().getModel();
 
             let oEntry = {
-                PoNumber: this._editPO.getValue(),
-                ItemNo: this._editItem.getValue(),         
-                Material: this._editMaterial.getValue(),
-                CreatedBy: this._editCreated.getValue()
+                PoNumber: this._inPO.getValue(),
+                ItemNo: this._inItem.getValue(),
+                Material: this._inMaterial.getValue(),
+                CreatedBy: this._inCreated.getValue()
             };
 
-            oModel.update(this._sPath, oEntry, {
-                success: () => {
-                    MessageToast.show("Item updated successfully!");
-                    oModel.refresh(true);
-                    this.oEditDialog.close();
-                },
+            let sPath =
+                "/PurchaseOrderDetailSet(PoNumber='" +
+                oEntry.PoNumber + "',ItemNo='" + oEntry.ItemNo + "')";
 
-                error: (err) => {
-                    MessageToast.show("Update failed");
-                    console.error(err);
-                }
-            });
+            if (isCreate) {
 
+                oModel.create("/PurchaseOrderDetailSet", oEntry, {
+                    success: () => {
+                        MessageToast.show("Item created!");
+                        this._refreshItems();
+                        this.oDialog.close();
+                    },
+                    error: console.error
+                });
+
+            } else {
+
+                oModel.update(sPath, oEntry, {
+                    success: () => {
+                        MessageToast.show("Item updated!");
+                        this._refreshItems();
+                        this.oDialog.close();
+                    },
+                    error: console.error
+                });
+            }
+        },
+
+        // =========================================================
+        // REFRESH ITEMS (refresh NP_PODetails navigation)
+        // =========================================================
+        _refreshItems: function () {
+            let oBind = this.getView().getElementBinding();
+            if (oBind) oBind.refresh(true);
         }
 
     });
